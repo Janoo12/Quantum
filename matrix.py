@@ -9,8 +9,8 @@ def dot(a,b):
 def trans(A):
     return [[A[j][i] for j in range(len(A))] for i in range(len(A[0]))]
 
-def Mv_mult(M,u):
-    return [dot(M[i],u) for i in range(len(M))]
+def Mv_mult(M,culomn_v):
+    return [dot(M[i],trans(culomn_v)) for i in range(len(M))]
 
 def MM_sub(A,B):
     return [[A[i][j]-B[i][j] for j in range(len(A[0]))]for i in range(len(A))]
@@ -19,7 +19,7 @@ def const_mult(c,A):
     return [[c*A[i][j] for j in range(len(A[0]))] for i in range(len(A))]
 
 def MM_mult(M,N):
-    return trans([Mv_mult(M,i) for i in trans(N)]) 
+    return trans([Mv_mult(M,trans(i)) for i in trans(N)]) 
 
 total=1
 
@@ -58,10 +58,36 @@ def tensor_xm(*args):
     [result.append(tensor_x(result[-1],args[i])) if i>0 else result.append(args[0]) for i in range(len(args))]
     return result[-1]
 
+def zero(n):
+    return [[0 for i in range(n)] for j in range(n)] 
+
 def eye(n):
-    return [[1 if j==i else 0 for j in range(n)] for i in range(n)]
+    return [[1 if c==r else 0 for c in range(n)] for r in range(n)]
+
+def X(n):
+    return [[1 if c==n-r-1 else 0 for c in range(n)] for r in range(n)]
+
+fair=[[0.5,0.5],[0.5,0.5]]
+
+def CNOT():
+    return unite(*[eye(2),zero(2),zero(2),X(2)])
+
+def i_bit(initial_state='101'):
+    return [[1] if i == int(initial_state,2) else [0] for i in range(2**len(initial_state))]
 
 def half(M):
     #return a list of matrices with dimension nxn
     half = len(M)//2
     return [[M[h*half:(h+1)*half][0][v*half:(v+1)*half],M[h*half:(h+1)*half][1][v*half:(v+1)*half]] for h in range(2) for v in range(2)]
+
+def unite(*args):
+    size= int(len(args)**0.5)
+    return v_adder(*[h_adder(*args[i*size:(i+1)*size]) for i in range(size)])
+    
+def reorder_st(V,new_order='231'):
+    result = [[] for i in range(2**len(new_order))]
+    [result[int(''.join([bin(i).replace('0b','').zfill(len(new_order))[int(o)-1] for o in new_order]),2)].extend(V[i]) for i in range(len(V))]
+    return result
+
+def reorder_op(M, new_order='231'):
+    return trans([trans(M)[int(''.join([bin(i).replace('0b','').zfill(len(new_order))[int(o)-1] for o in new_order]),2)] for i in range(len(M))])
