@@ -10,7 +10,7 @@ def trans(A):
     return [[A[j][i] for j in range(len(A))] for i in range(len(A[0]))]
 
 def Mv_mult(M,culomn_v):
-    return [dot(M[i],trans(culomn_v)[0]) for i in range(len(M))]
+    return [[dot(M[i],trans(culomn_v)[0])] for i in range(len(M))]
 
 def MM_sub(A,B):
     return [[A[i][j]-B[i][j] for j in range(len(A[0]))]for i in range(len(A))]
