@@ -6,8 +6,17 @@ def print_m(M):
 def dot(a,b):
     return sum([a[i]*b[i] for i in range(len(a))])
 
+def inner(v,w):
+    return sum([v[i].conjugate()*w[i] for i in range(len(v))])
+
+def trans_row(v):
+    return [[i] for i in v]
+
 def trans(A):
     return [[A[j][i] for j in range(len(A))] for i in range(len(A[0]))]
+
+def conj_trans(A):
+    return [[j.conjugate() for j in i] for i in trans(A)]
 
 def Mv_mult(M,culomn_v):
     return [[dot(M[i],trans(culomn_v)[0])] for i in range(len(M))]
@@ -19,7 +28,7 @@ def const_mult(c,A):
     return [[c*A[i][j] for j in range(len(A[0]))] for i in range(len(A))]
 
 def MM_mult(M,N):
-    return trans([Mv_mult(M,trans(i)) for i in trans(N)]) 
+    return trans([Mv_mult(M,trans_row(i)) for i in trans(N)]) 
 
 total=1
 
